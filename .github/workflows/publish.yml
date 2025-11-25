@@ -103,14 +103,16 @@ jobs:
           inputs: >-
             ./dist/*.tar.gz
             ./dist/*.whl
-      - name: Create GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create
-          "$GITHUB_REF_NAME"
-          --repo "$GITHUB_REPOSITORY"
-          --generate-notes --draft
+      # this is broken for now, need to crreate the release first
+      # see https://github.com/orgs/community/discussions/180369
+      # - name: Create GitHub Release
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   run: >-
+      #     gh release create
+      #     "$GITHUB_REF_NAME"
+      #     --repo "$GITHUB_REPOSITORY"
+      #     --generate-notes --draft
       - name: Upload artifact signatures to GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
