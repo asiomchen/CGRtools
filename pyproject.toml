@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=64", "wheel", "cython>=0.29,<3.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CGRtools"
+version = "4.1.35"
+description = "Tools for processing of reactions based on Condensed Graph of Reaction (CGR) approach"
+readme = "README.rst"
+requires-python = ">=3.8"
+license = "LGPL-3.0-or-later"
+authors = [
+    {name = "Dr. Ramil Nugmanov", email = "nougmanoff@protonmail.com"},
+    {name = "Dr. Timur Madzhidov", email = "tmadzhidov@gmail.com"},
+    {name = "Valentina Afonina"}
+]
+maintainers = [
+    {name = "Dr. Timur Madzhidov", email = "tmadzhidov@gmail.com"}
+]
+keywords = ["chemistry", "chemoinformatics", "CGR", "reaction", "molecule"]
+classifiers = [
+    "Environment :: Plugins",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+    "CachedMethods>=0.1.4,<0.2"
+]
+
+[project.optional-dependencies]
+mrv = ["lxml>=4.1"]
+clean2d = ["py-mini-racer>=0.4.0"]
+jit = ["numpy>=1.18", "numba>=0.50"]
+dev = [
+    "wheel",
+    "cython",
+    "build",
+    "pytest",
+    "ipython"
+]
+
+[project.urls]
+Homepage = "https://github.com/cimm-kzn/CGRtools"
+Documentation = "https://cgrtools.readthedocs.io"
+Repository = "https://github.com/cimm-kzn/CGRtools"
+Issues = "https://github.com/cimm-kzn/CGRtools/issues"
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+include = ["CGRtools*"]
+
+[tool.setuptools.package-data]
+"CGRtools.algorithms.calculate2d" = ["clean2d.js"]
+"CGRtools.containers" = ["_unpack.pyx"]
+
+[tool.cibuildwheel]
+build = ["cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+skip = ["*-musllinux_*", "pp*"]
+build-frontend = "build"

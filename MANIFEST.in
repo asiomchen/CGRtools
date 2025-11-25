@@ -1,0 +1,36 @@
+# Include documentation and license files
+include README.rst
+include LICENSE
+include readthedocs.yml
+
+# Include INCHI library files
+include INCHI/libinchi.so
+include INCHI/libinchi.dll
+include INCHI/LICENCE
+include INCHI/readme.txt
+
+# Include Cython source files
+include CGRtools/containers/_unpack.pyx
+
+# Include package data files
+include CGRtools/algorithms/calculate2d/clean2d.js
+
+# Include test files
+recursive-include test *.sdf *.rdf *.xyz *.rxn *.mrv *.txt
+
+# Include documentation
+recursive-include doc *.rst *.py *.ipynb
+
+# Include clean2d build files
+recursive-include clean2d *.json *.js README
+
+# Exclude build artifacts
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude *.so
+global-exclude *.c
+prune build
+prune dist
+prune CGRtools.egg-info
+prune __pycache__

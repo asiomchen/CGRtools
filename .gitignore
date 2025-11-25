@@ -1,0 +1,3 @@
+build/*
+*.egg-info/
+CGRtools/containers/_unpack.c

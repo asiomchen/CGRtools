@@ -18,88 +18,80 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with this program; if not, see <https://www.gnu.org/licenses/>.
 #
-from distutils.command.sdist import sdist
-from distutils.command.build import build
-from distutils.util import get_platform
-from importlib.util import find_spec
+import sys
 from pathlib import Path
 from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext as _build_ext
 
 
-class _sdist(sdist):
-    def finalize_options(self):
-        super().finalize_options()
-        self.distribution.data_files.append(('lib', ['INCHI/libinchi.so', 'INCHI/libinchi.dll']))
-
-
-cmd_class = {'sdist': _sdist}
-
-
-if find_spec('wheel'):
-    from wheel.bdist_wheel import bdist_wheel
-
-    class _bdist_wheel(bdist_wheel):
-        def finalize_options(self):
-            super().finalize_options()
-            self.root_is_pure = False
-            platform = get_platform()
-            if platform == 'win-amd64':
-                self.distribution.data_files.append(('lib', ['INCHI/libinchi.dll']))
-            elif platform == 'linux-x86_64':
-                self.distribution.data_files.append(('lib', ['INCHI/libinchi.so']))
-
-    cmd_class['bdist_wheel'] = _bdist_wheel
-
-
-if find_spec('cython'):
-    class _build(build):
-        def finalize_options(self):
-            super().finalize_options()
+class build_ext(_build_ext):
+    """Custom build_ext to handle Cython compilation."""
+    
+    def run(self):
+        # Import Cython here and compile just before building
+        try:
             from Cython.Build import cythonize
-            self.distribution.ext_modules = cythonize(self.distribution.ext_modules, language_level=3)
+            if self.distribution.ext_modules:
+                self.distribution.ext_modules = cythonize(
+                    self.distribution.ext_modules,
+                    language_level=3,
+                    compiler_directives={'embedsignature': True}
+                )
+        except ImportError:
+            # If Cython is not available during build, look for pre-generated C files
+            print("Cython not found. Looking for pre-generated C files...", file=sys.stderr)
+            c_file = Path('CGRtools/containers/_unpack.c')
+            if c_file.exists() and self.distribution.ext_modules:
+                # Replace .pyx with .c in sources
+                for ext in self.distribution.ext_modules:
+                    ext.sources = [src.replace('.pyx', '.c') for src in ext.sources]
+            else:
+                print("Warning: Neither Cython nor pre-generated C files found. "
+                      "Extension modules will not be built.", file=sys.stderr)
+                self.distribution.ext_modules = []
+        
+        super().run()
 
-    cmd_class['build'] = _build
 
+def get_data_files():
+    """Get platform-specific INCHI library files for wheel."""
+    import platform
+    
+    data_files = []
+    system = platform.system()
+    machine = platform.machine()
+    
+    # Include INCHI libraries based on platform
+    if system == 'Windows' and machine in ('AMD64', 'x86_64'):
+        dll_path = Path('INCHI/libinchi.dll')
+        if dll_path.exists():
+            data_files.append(('lib', ['INCHI/libinchi.dll']))
+    elif system == 'Linux' and machine in ('x86_64',):
+        so_path = Path('INCHI/libinchi.so')
+        if so_path.exists():
+            data_files.append(('lib', ['INCHI/libinchi.so']))
+    
+    return data_files
+
+
+# Extension modules
+ext_modules = [
+    Extension(
+        'CGRtools.containers._unpack',
+        ['CGRtools/containers/_unpack.pyx'],
+        extra_compile_args=['-O3']
+    )
+]
+
+# For source distributions, include both library files
+if 'sdist' in sys.argv:
+    data_files = [('lib', ['INCHI/libinchi.so', 'INCHI/libinchi.dll'])]
+else:
+    data_files = get_data_files()
 
 setup(
-    name='CGRtools',
-    version='4.1.35',
-    packages=['CGRtools', 'CGRtools.algorithms', 'CGRtools.algorithms.calculate2d', 'CGRtools.algorithms.components',
-              'CGRtools.algorithms.standardize', 'CGRtools.containers', 'CGRtools.files', 'CGRtools.files._mdl',
-              'CGRtools.periodictable', 'CGRtools.periodictable.element', 'CGRtools.reactor', 'CGRtools.utils',
-              'CGRtools.attributes'],
-    url='https://github.com/cimm-kzn/CGRtools',
-    license='LGPLv3',
-    author='Dr. Ramil Nugmanov, Dr. Timur Madzhidov, Valentina Afonina',
-    author_email='tmadzhidov@gmail.com',
-    python_requires='>=3.6.1',
-    cmdclass=cmd_class,
-    ext_modules=[Extension('CGRtools.containers._unpack', ['CGRtools/containers/_unpack.pyx'],
-                           extra_compile_args=['-O3'])],
-    setup_requires=['wheel', 'cython'],
-    install_requires=['CachedMethods>=0.1.4,<0.2'],
-    extras_require={'mrv': ['lxml>=4.1'], 'clean2d': ['py-mini-racer>=0.4.0'], 'jit': ['numpy>=1.18', 'numba>=0.50']},
-    package_data={'CGRtools.algorithms.calculate2d': ['clean2d.js'], 'CGRtools.containers': ['_unpack.pyx']},
-    data_files=[],
+    ext_modules=ext_modules,
+    data_files=data_files,
+    cmdclass={'build_ext': build_ext},
     zip_safe=False,
-    long_description=(Path(__file__).parent / 'README.rst').read_text(),
-    classifiers=['Environment :: Plugins',
-                 'Intended Audience :: Science/Research',
-                 'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
-                 'Operating System :: OS Independent',
-                 'Programming Language :: Python',
-                 'Programming Language :: Python :: 3 :: Only',
-                 'Programming Language :: Python :: 3.7',
-                 'Programming Language :: Python :: 3.8',
-                 'Programming Language :: Python :: 3.9',
-                 'Programming Language :: Python :: 3.10',
-                 'Topic :: Scientific/Engineering',
-                 'Topic :: Scientific/Engineering :: Chemistry',
-                 'Topic :: Scientific/Engineering :: Information Analysis',
-                 'Topic :: Software Development',
-                 'Topic :: Software Development :: Libraries',
-                 'Topic :: Software Development :: Libraries :: Python Modules'],
-    command_options={'build_sphinx': {'source_dir': ('setup.py', 'doc'),
-                                      'build_dir':  ('setup.py', 'build/doc'),
-                                      'all_files': ('setup.py', True)}}
 )
