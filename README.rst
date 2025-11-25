@@ -1,10 +1,10 @@
 CGRTools
 ========
 
-.. note::
-   **Fork Notice**: This is a maintained fork of the original CGRtools project with updates for modern Python versions (3.10-3.14) and automated wheel builds for Linux (x86_64, ARM64) and macOS (Intel, Apple Silicon).
-   It fixes the issue with newer Cython versions, makes package PEP517-complient and provides precompiled wheels for easier installation.
+**Fork Notice: This is a maintained fork of the original CGRtools project with updates for modern Python versions (3.10-3.14) and automated wheel builds for Linux (x86_64, ARM64) and macOS (Intel, Apple Silicon).
+It fixes the issue with newer Cython versions, makes package PEP517-complient and provides precompiled wheels for easier installation.**
 
+**[WIP] to fix your broken builds replace `cgrtools` with `cgrtools-plus` in your dependencies.**
 
 .. image:: https://zenodo.org/badge/14690494.svg
    :target: https://zenodo.org/badge/latestdoi/14690494
