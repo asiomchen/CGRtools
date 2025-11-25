@@ -3,9 +3,9 @@ requires = ["setuptools>=64", "wheel", "cython>=0.29,<3.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "CGRtools"
+name = "cgrtools-plus"
 version = "4.1.35"
-description = "Tools for processing of reactions based on Condensed Graph of Reaction (CGR) approach"
+description = "Tools for processing of reactions based on Condensed Graph of Reaction (CGR) approach - Enhanced fork with modern Python support"
 readme = "README.rst"
 requires-python = ">=3.8"
 license = "LGPL-3.0-or-later"
@@ -15,9 +15,9 @@ authors = [
     {name = "Valentina Afonina"}
 ]
 maintainers = [
-    {name = "Dr. Timur Madzhidov", email = "tmadzhidov@gmail.com"}
+    {name = "Anton Siomchen", email = "anton.siomchen+cgrtools@gmail.com"}
 ]
-keywords = ["chemistry", "chemoinformatics", "CGR", "reaction", "molecule"]
+keywords = ["chemistry", "chemoinformatics", "reaction", "molecule"]
 classifiers = [
     "Environment :: Plugins",
     "Intended Audience :: Science/Research",
@@ -54,10 +54,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/cimm-kzn/CGRtools"
+Homepage = "https://github.com/asiomchen/CGRtools"
 Documentation = "https://cgrtools.readthedocs.io"
-Repository = "https://github.com/cimm-kzn/CGRtools"
-Issues = "https://github.com/cimm-kzn/CGRtools/issues"
+Repository = "https://github.com/asiomchen/CGRtools"
+Issues = "https://github.com/asiomchen/CGRtools/issues"
 
 [tool.setuptools]
 zip-safe = false
@@ -71,5 +71,5 @@ include = ["CGRtools*"]
 
 [tool.cibuildwheel]
 build = ["cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
-skip = ["*-musllinux_*", "pp*"]
+skip = ["*-musllinux_*"]
 build-frontend = "build"

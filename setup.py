@@ -70,6 +70,7 @@ def get_data_files():
         so_path = Path('INCHI/libinchi.so')
         if so_path.exists():
             data_files.append(('lib', ['INCHI/libinchi.so']))
+    #TODO for MacOS InChI library should be built from source 
     
     return data_files
 

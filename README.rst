@@ -1,6 +1,10 @@
 CGRTools
 ========
 
+.. note::
+   **Fork Notice**: This is a maintained fork of the original CGRtools project with updates for modern Python versions (3.10-3.14) and automated wheel builds for Linux (x86_64, ARM64) and macOS (Intel, Apple Silicon).
+   It fixes the issue with newer Cython versions, makes package PEP517-complient and provides precompiled wheels for easier installation.
+
 
 .. image:: https://zenodo.org/badge/14690494.svg
    :target: https://zenodo.org/badge/latestdoi/14690494
@@ -78,20 +82,18 @@ General part
 
 * **stable version available through PyPI**::
 
-    pip install CGRTools
+    pip install cgrtools-plus
 
 * Install CGRtools with MRV files parsing support::
 
-    pip install CGRTools[mrv]
-
+    pip install cgrtools-plus[mrv]
 * Install CGRtools with structures `clean2d` support (Note: install NodeJS into system, see `details <https://github.com/sqreen/PyMiniRacer>`_)::
 
-    pip install CGRtools[clean2d]
+    pip install cgrtools-plus[clean2d]
 
 * Install CGRtools with optimized XYZ parser::
 
-    pip install CGRtools[jit]
-
+    pip install cgrtools-plus[jit]
 
 **If you still have questions, please open issue within github.**
 
@@ -100,7 +102,7 @@ PACKAGING
 
 For wheel generation just type next command in source root::
 
-    python setup.py bdist_wheel
+    python -m build
 
 COPYRIGHT
 =========
